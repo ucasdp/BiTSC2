@@ -219,6 +219,8 @@ sample_organize <- function(trace) {
         trace[[i]]$phi <- trace[[i]]$phi[ord]
         trace[[i]]$L <- trace[[i]]$L[,ord]
         trace[[i]]$Z <- trace[[i]]$Z[,ord]
+        trace[[i]]$Lo[,1] <- sapply(trace[[i]]$Lo[,1],function(x){ifelse(x==0,0,which(ord==x))})
+        trace[[i]]$Zo[,1] <- sapply(trace[[i]]$Zo[,1],function(x){which(ord==x)})
         trace[[i]]$C <- sapply(trace[[i]]$C,function(x){which(ord==x)})
       } else {
         Z_list[[length(Z_list)+1]] <- cur_Z 

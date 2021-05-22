@@ -14,22 +14,24 @@ require(dplyr)
 require(coda)
 require(gtools)
 require(Rcpp)
-require(shape)
 require(RcppArmadillo)
+require(shape)
 require("igraph")
 require(mclust)
 require(vegan)
+require(TailRank)
 
 
 ########################################################
 ######## load functions ################################
 ########################################################
 
+
 source('./code/assist_fun.R')
 source('./code/par_samp.R')
 source('./code/tree_samp_fun.R')
 source('./code/main_fun.R')
-sourceCpp("./code/params_real.cpp")
+sourceCpp("./code/params_mutipsi_likelihood.cpp")
 
 
 #################################################################
@@ -37,15 +39,16 @@ sourceCpp("./code/params_real.cpp")
 #################################################################
 
 scdata <- readRDS('example_data.RDS')
-# load("example.Rdata")
+
 myseed <-  1               # set random seed
-foldername <-  "temp_out"         # set output foldername
+foldername <-  "temp_out"          # set output foldername
 dir.create(foldername)  # folder where outputs are saved
 
 D <- scdata$obs.reads$D_drop # total reads, M * N matrix
 X <- scdata$obs.reads$X_drop # variant reads, M * N matrix
 segments <- NULL
-psi <- rep(3,dim(D)[2])
+segments <- scdata$segment
+psi <- rep(3,dim(D)[2]) #squencing depth
 
 
 ##############################################
@@ -71,7 +74,7 @@ dev.off()
 
 
 ##################################################
-########## visualization   ###############
+########## visualization   ######################
 ##################################################
 cat("Visualizing sampling results: \n")
 source("./code/Visualization.R")
@@ -83,7 +86,12 @@ Fit_visual(foldername,X,D)
 ########################################################
 source("./code/point_estimate.R")
 # # specify 
-# sample_Rdata <- "seed1_K4.Rdata"
-# point_est <- get_point_estimate(foldername,sample_Rdata)
+sample_Rdata <- "seed1_K4.Rdata"
+point_est <- get_point_estimate(foldername,sample_Rdata,Params)
+
+
+
+
+
 
 

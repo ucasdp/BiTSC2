@@ -2,7 +2,7 @@
 ############ get point estimation  ####################
 ####################################################################
 
-get_point_estimate <- function(foldername,rdata)
+get_point_estimate <- function(foldername,rdata,Params)
 {
   ### load rdata in this iteration
   cur_rdata <- paste(foldername,rdata,sep='/')
@@ -39,6 +39,21 @@ get_point_estimate <- function(foldername,rdata)
     med_rho <- mean(temp)
     point_est$rho <- med_rho
     
+    # mean mu
+    temp <- get_samp(chain2,'mu')
+    med_mu <- mean(temp)
+    point_est$mu <- med_mu
+
+    # mean w
+    temp <- get_samp(chain2,'w')
+    med_w <- mean(temp)
+    point_est$w <- med_w
+
+    # mean s
+    temp <- get_samp(chain2,'s')
+    med_s <- mean(temp)
+    point_est$s <- med_s
+    
     # mean C
     temp <- get_samp(chain2,'C')
     med_C <- apply(temp,2,Mode)
@@ -54,13 +69,21 @@ get_point_estimate <- function(foldername,rdata)
     med_Z <- apply(temp_Z,c(1,2),median)
     point_est$Z <- med_Z
     
+    
+    # estimation of g
+    Zo <- Z_to_Zo_cpp(point_est$Z)
+    Lo <- L_to_Lo_cpp(point_est$L)
+    point_est$Zo <- Zo
+    point_est$Lo <- Lo
+    point_est$g <- estimate_g(point_est,X,D,Params)
+    
     out[[j]] <- point_est
   }
   return(out)
 }
 
 
-Mode <-  function(x) {
+Mode <- function(x) {
   ux <-  unique(x)
   ux[which.max(tabulate(match(x, ux)))]
 }

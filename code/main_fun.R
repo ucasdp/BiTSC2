@@ -1,5 +1,3 @@
-
-
 ##################################################
 ##### parameter random initiation ###############
 ##################################################
@@ -26,26 +24,39 @@ init_gen_II <- function(Params, Heu_tree_cluster=NULL)
   # initial rho
   out$rho <- runif(1,min = 0, max = 1)
   
+  # initial mu
+  out$mu <- runif(1,min = 0, max = 1)
+  
+  # initial w
+  out$w <- rgamma(1,shape = Params$ws_shape, rate  = Params$ws_rate)
+  
+  # initial s
+  out$s <- rgamma(1,shape = Params$ws_shape, rate  = Params$ws_rate)
+  
+  out$g <- rep(0,Params$M)
   # initial L
-  tempL <- tempZ <- matrix(1, Params$M, Params$K)
+  tempL <- matrix(1, Params$M, 2)
+  tempZ <- matrix(1, Params$M, Params$K)
   segs <- Params$segments
   for(i in 1:nrow(segs))
   {
     cur_seg <- seq(segs[i,1], segs[i,2])
-    temp <- propose_L_cpp(out$Ttree, tempZ[cur_seg,,drop=F], Params)
+    temp <- propose_Lo_cpp(out$Ttree, tempZ[cur_seg,,drop=F], Params)
     for(j in cur_seg){
       tempL[j,] <- temp
     }
   }
-  out$L <- tempL
+  out$Lo <- tempL
+  out$L <- Lo_to_L_cpp(out$Lo, out$Ttree)
   
   # initial Z
-  tempZ <- matrix(0, Params$M, Params$K)
+  tempZ <- matrix(0, Params$M, 2)
   for(j in 1:Params$M)
   {
-    tempZ[j,] <- propose_Z_cpp(out$Ttree,tempL[j,],Params)
+    tempZ[j,] <- propose_Zo_cpp(out$Ttree,out$L[j,],Params)
   }
-  out$Z <- tempZ
+  out$Zo <- tempZ
+  out$Z <- Zo_to_Z_cpp(out$Zo,out$Lo,out$g,out$Ttree)
   
   # initial theta
   out$theta <- Heu_tree_cluster$phi*10
@@ -61,19 +72,18 @@ init_gen_II <- function(Params, Heu_tree_cluster=NULL)
 
 
 
-
 #######################################################
 ########## heuristic init gen ####################
 #######################################################
 heuristic_tree_cluster_gen <- function(X,D,K)
 {
   
-  P <- t(X/D) # observed VRF
+  P <- t(X/D) # observed VAF
   P[which(t(D)==0)] <- 0
   P_cluster <- Mclust(P,G=K)
   centers <- t(P_cluster$parameters$mean)
-  vrf_mean <- apply(centers,1,mean)
-  ord <- order(vrf_mean,decreasing = F)
+  vaf_mean <- apply(centers,1,mean)
+  ord <- order(vaf_mean,decreasing = F)
   centers <- centers[ord,]
   
   # initialize cluster
@@ -108,7 +118,6 @@ heuristic_tree_cluster_gen <- function(X,D,K)
 
 
 
-
 #######################################################
 ########## acquire one MCMC sample ####################
 #######################################################
@@ -128,19 +137,38 @@ MCMC_onesamp_II <- function(X, D, Params, init, adap, temper=1)
   
   out$pi <- samp_pi(out,Params,temper)
   
-  ######### update L matrix ##########
-  out$L <- samp_L_all(out,X,D,Params,temper)
+  ########## update w #######
   
+  out$w <- samp_w(out,Params,X,D,temper)
+  
+  ########## update s #######
+  
+  out$s <- samp_s(out,Params,D,temper)
+  
+  ########## update mu #######
+  
+  out$mu <- samp_mu(out,Params,X,D,temper)
+  
+  ######### update L matrix ##########
+  
+  out$Lo <- samp_Lo_all(out,X,D,Params,temper)
+  
+  out$L <- Lo_to_L_cpp(out$Lo, out$Ttree)
   
   #### update Z matrix #########
-  out$Z <- samp_Z_all(out,X,D,Params,temper)
+  
+  out$Zo <- samp_Zo_all(out, X, D, Params, temper)
+  
+  out$g <- estimate_g(out, X, D, Params)
+  
+  out$Z <- Zo_to_Z_cpp(out$Zo, out$Lo, out$g, out$Ttree)
   
   ##### update tree structure ########
   
   if(Params$K>2)
   {
-    Lo <- L_to_Lo_cpp(out$L)
-    Zo <- Z_to_Zo_cpp(out$Z)
+    Lo <- out$Lo
+    Zo <- out$Zo
     
     u <- runif(1)
     if(u<0.1){
@@ -168,10 +196,10 @@ MCMC_onesamp_II <- function(X, D, Params, init, adap, temper=1)
   
   
   ###### keep track of likelihood ########
-
+  #p=prob_XD(X,D,out$phi,out$L,out$Z,Params$psi)
   LL <- out$L[,out$C]
   ZZ <- out$Z[,out$C]
-  p <- sum(log_prob_X(X,D,LL,ZZ)+log_prob_D(D,LL,Params$psi,out$rho))
+  p <- sum(log_prob_X(X,D,LL,ZZ,out$w,out$mu)+log_prob_D(D,LL,Params$psi,out$rho,out$s,out$mu))
   out$likelihood <- p
   
   out

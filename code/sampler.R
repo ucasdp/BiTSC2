@@ -20,9 +20,10 @@ for( Nc in Nclone ){
   for(i in 1:MCMC_par$Nchain){
     if(Params$K==2){
       tree0 <- c(0,1)
-    } else {
+    } else {#tree0 <- heuristic_tree_gen(X,D,Params$K)
       HTC <- heuristic_tree_cluster_gen(X,D,Params$K)
       }
+    #New_par[[i]] <- init_gen(Params,tree0)
     New_par[[i]] <- init_gen_II(Params,HTC)
   }
 
@@ -37,7 +38,8 @@ for( Nc in Nclone ){
   tune_samp <- vector('list',MCMC_par$Nchain)
   Trace <- vector('list',MCMC_par$Nsamp)
   beta_log_like <- matrix(0,MCMC_par$Nchain ,MCMC_par$Nsamp)  # keep beta chain likelihood for WBIC
-
+  # Trace <- vector('list',Nrep)
+  # beta_log_like <- matrix(0,MCMC_par$Nchain, Nrep)
   
   for(i in 1:MCMC_par$Nchain) {
     tune_samp[[i]] <- vector('list',MCMC_par$Ntune)
@@ -134,9 +136,3 @@ for( Nc in Nclone ){
   cur_file=paste(foldername,'/seed',myseed,'_K',Nc,'.Rdata',sep='')
   save(Params,MCMC_par,Trace,myseed,beta_log_like,file=cur_file)
 }
-
-
-
-
-
-
