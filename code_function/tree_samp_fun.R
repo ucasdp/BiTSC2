@@ -67,7 +67,7 @@ MH_samp_tree <- function(tree,X,D,samp,Params,Lo,Zo,temper=1)
   p0 <- sum(log_prob_X(X,D,LL,ZZ,samp$w,samp$mu)+log_prob_D(D,LL,Params$psi,samp$rho,samp$s,samp$mu))
   p0 <- p0/temper
   #p0=prob_XD(X_f,D_f,samp$phi,samp$L,samp$Z,Params$psi)
-  p0 <-  p0 + log_prior_all(samp,Params,temper)
+  #p0 <-  p0 + log_prior_all(samp,Params,temper)
   
   ###### propose new tree
   l <- length(tree)
@@ -132,7 +132,6 @@ MH_samp_tree <- function(tree,X,D,samp,Params,Lo,Zo,temper=1)
   
   new_samp$Z <- Zo_to_Z_cpp(Zo2,Lo2,gnew,new_tree)
   
-  
   new_LL <- new_samp$L[,new_samp$C]
   new_ZZ <- new_samp$Z[,new_samp$C]
   new_samp$likelihood <- sum(log_prob_X(X,D,new_LL,new_ZZ,new_samp$w,new_samp$mu)+log_prob_D(D,new_LL,Params$psi,new_samp$rho,new_samp$s,new_samp$mu))
@@ -141,7 +140,7 @@ MH_samp_tree <- function(tree,X,D,samp,Params,Lo,Zo,temper=1)
   
   #new_samp$likelihood <-  prob_XD(X_f,D_f,new_samp$phi,new_samp$L,new_samp$Z,Params$psi)
   #p1=new_samp$likelihood
-  p1 <- p1 + log_prior_all(new_samp,Params,temper)
+  #p1 <- p1 + log_prior_all(new_samp,Params,temper)
   
   ##### calculate acceptance rate
   acc_prob <- min(1,exp(p1-p0))

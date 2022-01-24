@@ -166,7 +166,7 @@ NumericMatrix Zo_to_Z_cpp(NumericMatrix Zo, NumericMatrix Lo, NumericVector g, N
 }
 
 //[[Rcpp::export]]
-NumericMatrix Z_to_Zo_cpp(NumericMatrix Z)
+NumericMatrix Z_to_Zo_cpp(NumericMatrix Z, NumericMatrix Lo, NumericVector g)
 {
   int M=Z.nrow();// number of muts
   int K=Z.ncol(); // number of subclones
@@ -177,7 +177,13 @@ NumericMatrix Z_to_Zo_cpp(NumericMatrix Z)
   for (int m=0;m<M;m++){
     temp[0]=temp[1]=0;
     for(int k=0;k<K;k++){
-      if(Z(m,k) != 0){temp[1]= 1;temp[0]=k+1;break;}
+      if(Z(m,k) != 0){
+        if(Lo.at(m,0)== (k+1) && g.at(m)==1){
+          temp[1]= Z(m,k) - Lo.at(m,1);temp[0]=k+1;break;
+        }else{
+          temp[1]= Z(m,k);temp[0]=k+1;break;
+        }
+      }
     }
     out.row(m)=temp;
   }
@@ -353,7 +359,7 @@ int Gibbs_C_cpp(int n, arma::mat Z, arma::mat L, arma::mat X, arma::mat D, List 
 NumericVector samp_C_all(List samp, List Params, arma::mat X, arma::mat D, double temper)
 {
   NumericVector out=samp["C"];
-  int N=Params["N"], K=Params["K"];
+  int N=Params["N"];
   arma::mat Z=samp["Z"], L=samp["L"];
   for (int n=1; n<=N; n++){
     int temp=Gibbs_C_cpp(n,Z,L,X,D,Params,samp,temper);
@@ -495,15 +501,14 @@ NumericVector Gibbs_Lo_cpp(arma::uvec indVec, List samp, arma::mat X, arma::mat 
          p0=prior_L_cpp(wrap(new_l),samp,Params)/temper;
         
          for(arma::uvec::iterator it_m=indVec.begin(); it_m != indVec.end(); it_m++){
-           arma::vec Zm = Z.row(*it_m-1).t();
-           NumericMatrix Zmo = Z_to_Zo_cpp(wrap(Zm.t()));
+           arma::vec Zmo = Zo.row(*it_m-1).t();
            if(-v>Zmo.at(0,1)&&-v>2+v-Zmo.at(0,1)){
              p0=0;
              break;
            }
            
            g.at(0)=0;
-           NumericMatrix temp_Z = Zo_to_Z_cpp(Zmo,wrap(cur_lo.t()),g,tree);
+           NumericMatrix temp_Z = Zo_to_Z_cpp(wrap(Zmo.t()),wrap(cur_lo.t()),g,tree);
            double p1 = log_p_Lo_cpp(new_l,as<arma::vec>(temp_Z),*it_m,D,X,samp,Params,temper);
            
            if(cnv_ances[Zmo.at(0,0)-1]){
@@ -512,13 +517,13 @@ NumericVector Gibbs_Lo_cpp(arma::uvec indVec, List samp, arma::mat X, arma::mat 
           
              if(v>0){
                g.at(0)=1;
-               temp_Z1 = Zo_to_Z_cpp(Zmo,wrap(cur_lo.t()),g,tree);
+               temp_Z1 = Zo_to_Z_cpp(wrap(Zmo.t()),wrap(cur_lo.t()),g,tree);
                p2 = log_p_Lo_cpp(new_l,as<arma::vec>(temp_Z1),*it_m,D,X,samp,Params,temper);
              }
              if(v<0){
                if(-v<=Zmo.at(0,1)){
                  g.at(0)=1;
-                 temp_Z1 = Zo_to_Z_cpp(Zmo,wrap(cur_lo.t()),g,tree);
+                 temp_Z1 = Zo_to_Z_cpp(wrap(Zmo.t()),wrap(cur_lo.t()),g,tree);
                  p2 = log_p_Lo_cpp(new_l,as<arma::vec>(temp_Z1),*it_m,D,X,samp,Params,temper);
                }else{
                  p2=p1;
@@ -564,7 +569,6 @@ NumericVector Gibbs_Lo_cpp(arma::uvec indVec, List samp, arma::mat X, arma::mat 
 NumericMatrix samp_Lo_all(List samp, arma::mat X, arma::mat D, List Params, double temper)
 {
   int M=Params["M"]; // number locus
-  int K=Params["K"]; // number of subclones
   arma::mat segs=Params["segments"];
   int nsegs= segs.n_rows;
 
@@ -604,9 +608,9 @@ NumericMatrix samp_Lo_all(List samp, arma::mat X, arma::mat D, List Params, doub
 // ------------------------- sampling of Z  --------------------------
 //------------------------------------------------------------------------
 //[[Rcpp::export]]
-double prior_Z_cpp(NumericVector Zm, List Params)
+double prior_Z_cpp(NumericVector Zmo, List Params)
 {
-  int a=max(Zm);
+  int a= Zmo.at(1);
   int max_mut=Params["max_mut"];
   double zeta=Params["zeta"];
 
@@ -620,7 +624,7 @@ double prior_Z_cpp(NumericVector Zm, List Params)
 
 
 //[[Rcpp::export]]
-double log_p_Z_cpp(int m, arma::vec Zm, arma::vec Lm,  arma::mat D, arma::mat X, List samp, List Params, double temper)
+double log_p_Z_cpp(int m, arma::vec Zm, arma::vec Zmo, arma::vec Lm,  arma::mat D, arma::mat X, List samp, List Params, double temper)
 {
   int N = Params["N"];
   NumericVector C = samp["C"];
@@ -635,7 +639,7 @@ double log_p_Z_cpp(int m, arma::vec Zm, arma::vec Lm,  arma::mat D, arma::mat X,
   }
   
   arma::mat px = log_prob_X(X.row(m-1),D.row(m-1),Ln.t(),Zn.t(),w,mu);
-  double out = accu(px) + prior_Z_cpp(wrap(Zm),Params);
+  double out = accu(px) + prior_Z_cpp(wrap(Zmo.t()),Params);
 
   out = out/temper;
   return out;
@@ -646,7 +650,6 @@ double log_p_Z_cpp(int m, arma::vec Zm, arma::vec Lm,  arma::mat D, arma::mat X,
 //[[Rcpp::export]]
 NumericVector propose_Zo_cpp(NumericVector tree, NumericVector Lm, List Params)
 {
-  int K=Params["K"];
   // sample an origin with L > 0
   LogicalVector loc=(Lm > 0);
   loc[0]=0; // change value for normal clone
@@ -709,21 +712,20 @@ NumericVector Gibbs_Zo_cpp(int m, arma::vec Lmo, List samp, arma::mat X, arma::m
       g.at(0)=0;
       double p1;
       NumericMatrix temp_Z = Zo_to_Z_cpp(wrap(cur_zo.t()),wrap(Lmo.t()),g,tree);
-      p1 = log_p_Z_cpp(m,as<arma::vec>(temp_Z),Lm,D,X,samp,Params,temper);
-      
+      p1 = log_p_Z_cpp(m,as<arma::vec>(temp_Z),cur_zo,Lm,D,X,samp,Params,temper);
+      double p2=0;
       
       if(cnv_ances[k-1]){
-        double p2;
         if(Lmo.at(1)>0){
           g.at(0)=1;
           NumericMatrix temp_Z = Zo_to_Z_cpp(wrap(cur_zo.t()),wrap(Lmo.t()),g,tree);
-          p2 = log_p_Z_cpp(m,as<arma::vec>(temp_Z),Lm,D,X,samp,Params,temper);
+          p2 = log_p_Z_cpp(m,as<arma::vec>(temp_Z),cur_zo,Lm,D,X,samp,Params,temper);
         }
         if(Lmo.at(1)<0){
           if(v>=-Lmo.at(1)){
             g.at(0)=1;
             NumericMatrix temp_Z = Zo_to_Z_cpp(wrap(cur_zo.t()),wrap(Lmo.t()),g,tree);
-            p2 = log_p_Z_cpp(m,as<arma::vec>(temp_Z),Lm,D,X,samp,Params,temper);
+            p2 = log_p_Z_cpp(m,as<arma::vec>(temp_Z),cur_zo,Lm,D,X,samp,Params,temper);
           }else{
             p2 = p1;
           }
@@ -763,7 +765,7 @@ NumericVector Gibbs_Zo_cpp(int m, arma::vec Lmo, List samp, arma::mat X, arma::m
 //[[Rcpp::export]]
 NumericMatrix samp_Zo_all(List samp, arma::mat X, arma::mat D, List Params, double temper)
 {
-  int M=Params["M"], K=Params["K"];
+  int M=Params["M"];
   arma::mat Lo=samp["Lo"];
   NumericMatrix out(M,2);
   NumericVector temp(2);
@@ -1003,7 +1005,6 @@ arma::mat log_prob_D(arma::mat D, arma::mat L, arma::vec psi, double rho, double
   return out;
 }
 
-
 // calculate prior for all parameters
 //[[Rcpp::export]]
 double log_prior_all(List samp, List Params, double temper)
@@ -1013,8 +1014,6 @@ double log_prior_all(List samp, List Params, double temper)
   arma::mat L=samp["L"], Z=samp["Z"];
   arma::vec theta=samp["theta"], phi=samp["phi"];
   NumericVector C=samp["C"];
-  double rho = samp["rho"];
-  double mu = samp["mu"];
   double w = samp["w"];
   double s = samp["s"];
   // double omega = samp["over_omega"];
@@ -1060,15 +1059,3 @@ double log_prior_all(List samp, List Params, double temper)
   return out/temper;
 }
 
-
-// calculate likilihood matrix l_mn=p(x_mn | ...) p(d_mn | ...)
-//[[Rcpp::export]]
-arma::mat likelihood_mat(arma::mat X, arma::mat D, arma::mat L, arma::mat Z, double w,double s,double mu, List Params, double rho)
-{
-  arma::vec psi=Params["psi"];
-  
-  //arma::mat P= Z / L;
-  arma::mat out = log_prob_X(X,D,L,Z,w,mu) + log_prob_D(D,L,psi,rho,s,mu);
-
- return out;
-}

@@ -2,7 +2,7 @@
 ############ get point estimation  ####################
 ####################################################################
 
-get_point_estimate <- function(foldername,rdata,Params)
+get_point_estimate <- function(foldername,rdata)
 {
   ### load rdata in this iteration
   cur_rdata <- paste(foldername,rdata,sep='/')
@@ -54,28 +54,36 @@ get_point_estimate <- function(foldername,rdata,Params)
     med_s <- mean(temp)
     point_est$s <- med_s
     
-    # mean C
+    # mode C
     temp <- get_samp(chain2,'C')
     med_C <- apply(temp,2,Mode)
     point_est$C <- med_C
     
-    # median L
-    temp <- get_samp(chain2,'L')
-    med_L <- apply(temp,c(1,2),median)
-    point_est$L <- med_L
+    # # median L
+    # temp <- get_samp(chain2,'L')
+    # med_L <- apply(temp,c(1,2),median)
+    # point_est$L <- med_L
+    # 
+    # # median Z
+    # temp_Z <- get_samp(chain2,'Z')
+    # med_Z <- apply(temp_Z,c(1,2),median)
+    # point_est$Z <- med_Z
     
-    # median Z
-    temp_Z <- get_samp(chain2,'Z')
-    med_Z <- apply(temp_Z,c(1,2),median)
-    point_est$Z <- med_Z
+    # mode Zo
+    temp <- get_samp(chain2,'Zo')
+    med_Zo <- apply(temp,c(1,2), Mode)
+    point_est$Zo <- med_Zo
+    
+    # mode Lo
+    temp <- get_samp(chain2,'Lo')
+    med_Lo <- apply(temp,c(1,2), Mode)
+    point_est$Lo <- med_Lo
     
     
     # estimation of g
-    Zo <- Z_to_Zo_cpp(point_est$Z)
-    Lo <- L_to_Lo_cpp(point_est$L)
-    point_est$Zo <- Zo
-    point_est$Lo <- Lo
+    point_est$L <- Lo_to_L_cpp(point_est$Lo, point_est$Ttree)
     point_est$g <- estimate_g(point_est,X,D,Params)
+    point_est$Z <- Zo_to_Z_cpp(point_est$Zo, point_est$Lo, point_est$g, point_est$Ttree)
     
     out[[j]] <- point_est
   }
@@ -87,4 +95,13 @@ Mode <- function(x) {
   ux <-  unique(x)
   ux[which.max(tabulate(match(x, ux)))]
 }
+
+
+
+
+
+
+
+
+
 

@@ -27,11 +27,11 @@ require(TailRank)
 ########################################################
 
 
-source('./code/assist_fun.R')
-source('./code/par_samp.R')
-source('./code/tree_samp_fun.R')
-source('./code/main_fun.R')
-sourceCpp("./code/params_mutipsi_likelihood.cpp")
+source('./code_function/assist_fun.R')
+source('./code_function/par_samp.R')
+source('./code_function/tree_samp_fun.R')
+source('./code_function/main_fun.R')
+sourceCpp("./code_function/params_mutipsi_likelihood.cpp")
 
 
 #################################################################
@@ -54,20 +54,20 @@ psi <- rep(3,dim(D)[2]) #squencing depth
 ##############################################
 ######## load parameter file ################
 ############################################
-source('./code/specify_pars.R')
+source('./code_function/specify_pars.R')
 par_disp(Params, MCMC_par)
 
 ##############################################
 ######## sampling ##########################
 ############################################
-source("./code/sampler.R")
+source("./code_function/sampler.R")
 
 
 ##################################################
 ########## model selection:   ###############
 ##################################################
 
-source("./code/Model_select.R")
+source("./code_function/Model_select.R")
 pdf(paste(foldername,"/","selection.pdf",sep=""))
 BIC_fun(X,D,foldername)
 dev.off()
@@ -77,17 +77,17 @@ dev.off()
 ########## visualization   ######################
 ##################################################
 cat("Visualizing sampling results: \n")
-source("./code/Visualization.R")
+source("./code_function/Visualization.R")
 Fit_visual(foldername,X,D)
 
 
 ########################################################
 ########## get point estimates ###############
 ########################################################
-source("./code/point_estimate.R")
+source("./code_function/point_estimate.R")
 # # specify 
 sample_Rdata <- "seed1_K4.Rdata"
-point_est <- get_point_estimate(foldername,sample_Rdata,Params)
+point_est <- get_point_estimate(foldername,sample_Rdata)
 
 
 
