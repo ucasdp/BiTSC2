@@ -64,7 +64,7 @@ source("./code_function/sampler.R")
 
 
 ##################################################
-########## model selection:   ###############
+########## model selection   ###############
 ##################################################
 
 source("./code_function/Model_select.R")
