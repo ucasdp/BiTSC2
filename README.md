@@ -2,7 +2,7 @@
 Bayesian inference of Tumor clonal Tree by joint analysis of Single-Cell SNV and CNA data
 
 ## Software dependencies
-BiTSC2 is written with R and C++. Before implementing our software, please install the following packages in R:
+BiTSC2 is written with <table><tr><td bgcolor=grey>R</td></tr></table> and C++. Before implementing our software, please install the following packages in R:
 
 data manipulation: tidyr,reshape,dplyr
 
