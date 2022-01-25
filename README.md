@@ -23,7 +23,7 @@ The steps executed by BiTSC2 are concentrated in the script `BiTSC2_app.R`:
 2. Initialize the prior parameters;
 3. Carry out MCMC sampling, then the samples used for inference are stored in the "`temp_out/seed1_K\*.Rdata`" files;
 4. Make model selection. The corresponding `K` and calculated BIC values are stored in the "`temp_out/BIC_model_selection.Rdata`", and the visual graphics of `K` and BIC are displayed in "`temp_out/selection.pdf`";
-5. Visualize model sampling results: under different `K`, visualize the estimated subclonal evolutionary tree, CNA genotype matrix `L` and SNV genotype matrix `Z`, and the results are shown in "`temp_out/seed1_K\*_fit.pdf`" files;
+5. Visualize model sampling results: under different `K`, visualize the estimated subclonal evolutionary tree `T`, CNA genotype matrix `L` and SNV genotype matrix `Z`, and the results are shown in "`temp_out/seed1_K\*_fit.pdf`" files;
 6. According to the model selection, then get the final estimated results, which are stored in the variable `point_est`.
 
 
