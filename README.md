@@ -3,7 +3,7 @@ Bayesian inference of Tumor clonal Tree by joint analysis of Single-Cell SNV and
 
 
 ## Usage
-The steps executed by BiTSC2 are concentrated in the script *BiTSC2_run.R*:
+The steps executed by BiTSC2 are concentrated in the script *BiTSC2_app.R*:
 1. Input the total reads matrix and the mutant reads matrix *D* and *X* and squencing depth *psi*. If there is genome segment information, it can be used as input information to improve the accuracy of the estimation. If not, assign variable *segment* as *NULL*, that is, use locus specific segments (each gene/ SNV locus as a segment) to update the CNA genotype matrix *L*;
 2. Initialize the prior parameters;
 3. Carry out MCMC sampling, then the samples used for inference are stored in the "*temp_out/seed1_K\*.Rdata*" files;
