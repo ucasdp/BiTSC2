@@ -44,8 +44,8 @@ myseed <-  1               # set random seed
 foldername <-  "temp_out"          # set output foldername
 dir.create(foldername)  # folder where outputs are saved
 
-D <- scdata$obs.reads$D_drop # total reads, M * N matrix
-X <- scdata$obs.reads$X_drop # variant reads, M * N matrix
+D <- scdata$obs.reads$D_drop # total reads, M * N matrix, where row represent locus, column represent cell
+X <- scdata$obs.reads$X_drop # variant reads, M * N matrix. where row represent locus, column represent cell
 segments <- NULL
 segments <- scdata$segment
 psi <- rep(3,dim(D)[2]) #squencing depth
