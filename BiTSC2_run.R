@@ -54,7 +54,7 @@ psi <- rep(3,dim(D)[2]) #squencing depth
 ##############################################
 ######## load parameter file ################
 ############################################
-source('./code_function/specify_pars.R')
+source('specify_pars.R')
 par_disp(Params, MCMC_par)
 
 ##############################################
