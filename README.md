@@ -19,7 +19,8 @@ others: `mclust`, `gtools`, `vegan`, `TailRank`
 
 ## Usage
 The steps executed by BiTSC2 are concentrated in the script `BiTSC2_app.R`:
-###1. Input the total reads matrix and the mutant reads matrix `D` and `X` and squencing depth `psi`. 
+
+### 1. Input the total reads matrix and the mutant reads matrix `D` and `X` and squencing depth `psi`. 
 ```
 scdata <- readRDS('example_data.RDS')
 
