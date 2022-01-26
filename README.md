@@ -1,4 +1,4 @@
-# BiTSC^2
+# $BiTSC^2$
 Bayesian inference of Tumor clonal Tree by joint analysis of Single-Cell SNV and CNA data
 
 ## Software dependencies
