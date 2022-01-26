@@ -64,13 +64,14 @@ To use BiTSC2, please set `R` working directory to SIFA_package after cloning th
 
 * Then run the remaining sections one by one:
 
-   > `sampler.R` to perform MCMC sampling, then the samples used for inference are stored in the `temp_out/seed1_K*.Rdata` files;
+   + `sampler.R` to perform MCMC sampling, then the samples used for inference are stored in the `.Rdata` files;
    
-   > `Model_select.R` to make model selection. The corresponding `K` and calculated BIC values are stored in the `temp_out/BIC_model_selection.Rdata`, and the visual graphics of `K` and BIC are displayed in `temp_out/selection.pdf`;
+   + `Model_select.R` to make model selection. The corresponding `K` and calculated BIC values are stored in the `BIC_model_selection.Rdata`, and the
+      visual graphics of `K` and BIC are displayed in `selection.pdf`;
    
-   > `Visualization.R` to visualize model sampling results: under different `K`, visualize the estimated subclonal evolutionary tree `T`, CNA genotype matrix `L` and SNV genotype matrix `Z`, and the results are shown in `temp_out/seed1_K*_fit.pdf` files;
+   + `Visualization.R` to visualize model sampling results: under different `K`, visualize the estimated subclonal evolutionary tree `T`, CNA genotype matrix `L` and SNV genotype matrix `Z`, and the results are shown in `_fit.pdf` files;
    
-   > `point_estimate.R` to get the final estimated results from a given posterior sample `.Rdata` file, which are stored in the variable `point_est`.
+   + `point_estimate.R` to get the final estimated results from a given posterior sample `.Rdata` file, which are stored in the variable `point_est`.
 
 
 ## Citation
