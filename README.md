@@ -43,7 +43,8 @@ To use BiTSC2, please set `R` working directory to SIFA_package after cloning th
   segments <- scdata$segment
   psi <- rep(3,dim(D)[2]) #squencing depth
   ```
-If there is genome segment information, it can be used as input information to improve the accuracy of the estimation. If not, assign variable `segment` as `NULL`, that is, use locus specific segments (each gene/ SNV locus as a segment) to update the CNA genotype matrix `L`;
+  If there is genome segment information, it can be used as input information to improve the accuracy of the estimation. If not, assign variable `segment` as
+  `NULL`, that is, use locus specific segments (each gene/ SNV locus as a segment) to update the CNA genotype matrix `L`;
    
 
 * Next, specify Bayesian sampling parameters in `specify_pars.R`. For most of the parameters, default values work just fine. Some of the parameters you can change are:
