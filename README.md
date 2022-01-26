@@ -19,7 +19,24 @@ others: `mclust`, `gtools`, `vegan`, `TailRank`
 
 ## Usage
 The steps executed by BiTSC2 are concentrated in the script `BiTSC2_app.R`:
-1. Input the total reads matrix and the mutant reads matrix `D` and `X` and squencing depth `psi`. If there is genome segment information, it can be used as input information to improve the accuracy of the estimation. If not, assign variable `segment` as `NULL`, that is, use locus specific segments (each gene/ SNV locus as a segment) to update the CNA genotype matrix `L`;
+### 1. Input the total reads matrix and the mutant reads matrix `D` and `X` and squencing depth `psi` and segment information. For the example data:
+```
+scdata <- readRDS('example_data.RDS')
+
+myseed <-  1               # set random seed
+foldername <-  "temp_out"          # set output foldername
+dir.create(foldername)  # folder where outputs are saved
+
+D <- scdata$obs.reads$D_drop # total reads, M * N matrix, where row represent locus, column represent cell
+X <- scdata$obs.reads$X_drop # variant reads, M * N matrix. where row represent locus, column represent cell
+#segments <- NULL
+segments <- scdata$segment
+psi <- rep(3,dim(D)[2]) #squencing depth
+ 
+ ```
+   If there is genome segment information, it can be used as input information to improve the accuracy of the estimation. If not, assign variable `segment` as `NULL`, that is, use locus specific segments (each gene/ SNV locus as a segment) to update the CNA genotype matrix `L`;
+   
+
 2. Initialize the prior parameters;
 3. Carry out MCMC sampling, then the samples used for inference are stored in the `temp_out/seed1_K*.Rdata` files;
 4. Make model selection. The corresponding `K` and calculated BIC values are stored in the `temp_out/BIC_model_selection.Rdata`, and the visual graphics of `K` and BIC are displayed in `temp_out/selection.pdf`;
