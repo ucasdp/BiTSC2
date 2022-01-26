@@ -2,6 +2,7 @@
 Bayesian inference of Tumor clonal Tree by joint analysis of Single-Cell SNV and CNA data
 
 ## Software dependencies
+
 BiTSC2 is written with `R` and `C++`. Before implementing our software, please install the following packages in `R`:
 
 data manipulation: `tidyr`, `reshape`, `dplyr`
@@ -22,46 +23,43 @@ others: `mclust`, `gtools`, `vegan`, `TailRank`
 To use BiTSC2, please set `R` working directory to SIFA_package after cloning this repository. Make sure you have installed all the dependencies correctly, and then open source code `BiTSC2_app.R` to execute the commands line by line as following.
 
 * For Model Input section, specify random seed `myseed`, and specify the folder `foldername` to save output files (a new folder will be created if it does not exist). For example: 
+  ```
+  #################################################################
+  ###################### MODEL INPUT ##############################
+  #################################################################
 
-```
-#################################################################
-###################### MODEL INPUT ##############################
-#################################################################
+  myseed <-  1               # set random seed
+  foldername <-  "temp_out"          # set output foldername
+  dir.create(foldername)  # folder where outputs are saved
+  ```
 
-myseed <-  1               # set random seed
-foldername <-  "temp_out"          # set output foldername
-dir.create(foldername)  # folder where outputs are saved
-
-```
-
-Then input the total reads matrix and the mutant reads matrix `D` and `X` and squencing depth `psi` and segment information. For the given example data:
-```
-scdata <- readRDS('example_data.RDS')
-D <- scdata$obs.reads$D_drop # total reads, M * N matrix, where row represents locus, column represents cell
-X <- scdata$obs.reads$X_drop # variant reads, M * N matrix. where row represents locus, column represents cell
-#segments <- NULL
-segments <- scdata$segment
-psi <- rep(3,dim(D)[2]) #squencing depth
- 
- ```
+  Then input the total reads matrix and the mutant reads matrix `D` and `X` and squencing depth `psi` and segment information. For the given example data:
+  
+  ```
+  scdata <- readRDS('example_data.RDS')
+  D <- scdata$obs.reads$D_drop # total reads, M * N matrix, where row represents locus, column represents cell
+  X <- scdata$obs.reads$X_drop # variant reads, M * N matrix. where row represents locus, column represents cell
+  #segments <- NULL
+  segments <- scdata$segment
+  psi <- rep(3,dim(D)[2]) #squencing depth
+  ```
 If there is genome segment information, it can be used as input information to improve the accuracy of the estimation. If not, assign variable `segment` as `NULL`, that is, use locus specific segments (each gene/ SNV locus as a segment) to update the CNA genotype matrix `L`;
    
 
 * Next, specify Bayesian sampling parameters in `specify_pars.R`. For most of the parameters, default values work just fine. Some of the parameters you can change are:
+  ```
+  #### maximum number of copy
+  Params$max_CN <- 4
 
-```
-#### maximum number of copy
-Params$max_CN <- 4
+  #### maximum number of mutant copies
+  Params$max_mut <- 1
 
-#### maximum number of mutant copies
-Params$max_mut <- 1
+  MCMC_par$burnin <- 1000  # burnin sample size
+  MCMC_par$Nsamp <- 1000   # number of samples for inference
+  MCMC_par$Ntune <- 1000  # number of samples used for adaptive parameter tuning
 
-MCMC_par$burnin <- 1000  # burnin sample size
-MCMC_par$Nsamp <- 1000   # number of samples for inference
-MCMC_par$Ntune <- 1000  # number of samples used for adaptive parameter tuning
-
-Nclone <- c(3:10)  # candidate subclone numbers K
-```
+  Nclone <- c(3:10)  # candidate subclone numbers K
+  ```
 
 * Then run the remaining sections one by one:
 
