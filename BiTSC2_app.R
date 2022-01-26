@@ -38,13 +38,12 @@ sourceCpp("./code_function/params_mutipsi_likelihood.cpp")
 ########## MODEL INPUT ############################################
 #################################################################
 
-scdata <- readRDS('example_data.RDS')
-
 myseed <-  1               # set random seed
 foldername <-  "temp_out"          # set output foldername
 dir.create(foldername)  # folder where outputs are saved
 
-D <- scdata$obs.reads$D_drop # total reads, M * N matrix, where row represent locus, column represent cell
+scdata <- readRDS('example_data.RDS')
+D <- scdata$obs.reads$D_drop # total reads, M * N matrix, where row represents locus, column represents cell
 X <- scdata$obs.reads$X_drop # variant reads, M * N matrix. where row represent locus, column represent cell
 #segments <- NULL
 segments <- scdata$segment
