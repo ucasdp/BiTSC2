@@ -89,5 +89,5 @@ adapt_par <- lapply(c(1:MCMC_par$Nchain),function(x){adapt_par})
 
 # candidate subclone numbers K
 # need K >= 2
-Nclone <- c(3:7) 
+Nclone <- c(3:10) 
 
