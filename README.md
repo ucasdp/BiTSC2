@@ -13,7 +13,7 @@ integrating `c++` functionality: `Rcpp`, `RcppArmadillo`
 
 visualization: `ggplot2`, `igraph`
 
-others: `mclust`, `gtools`, `vegan`, `TailRank`
+others: `mclust`, `gtools`, `vegan`
 
 
 
