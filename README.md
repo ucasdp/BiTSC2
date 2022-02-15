@@ -20,7 +20,7 @@ others: `mclust`, `gtools`, `vegan`
 
 ## Usage
 
-To use BiTSC2, please set `R` working directory to `BiTSC2_package` after cloning this repository. Make sure you have installed all the dependencies correctly, and then open source code `BiTSC2_app.R` to execute the commands line by line as following.
+To use BiTSC2, please set `R` working directory to `BiTSC2-master` after downloading this repository. Please make sure you have installed all the dependencies correctly, and then open source code `BiTSC2_app.R` to execute the commands line by line as following.
 
 * For Model Input section, specify random seed `myseed`, and specify the folder `foldername` to save output files (a new folder will be created if it does not exist). For example: 
   ```
@@ -41,7 +41,7 @@ To use BiTSC2, please set `R` working directory to `BiTSC2_package` after clonin
   X <- scdata$obs.reads$X_drop # variant reads, M * N matrix. where row represents locus, column represents cell
   #segments <- NULL
   segments <- scdata$segment
-  psi <- rep(3,dim(D)[2]) #squencing depth
+  psi <- rep(3,dim(D)[2]) # squencing depth of each cell
   ```
   If there is genome segment information, it can be used as input information to improve the accuracy of the estimation. If not, assign variable `segment` as
   `NULL`, that is, use locus specific segments (each gene/ SNV locus as a segment) to update the CNA genotype matrix `L`;
