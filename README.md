@@ -20,7 +20,7 @@ others: `mclust`, `gtools`, `vegan`
 
 ## Usage
 
-To use BiTSC2, please set `R` working directory to SIFA_package after cloning this repository. Make sure you have installed all the dependencies correctly, and then open source code `BiTSC2_app.R` to execute the commands line by line as following.
+To use BiTSC2, please set `R` working directory to `BiTSC2_package` after cloning this repository. Make sure you have installed all the dependencies correctly, and then open source code `BiTSC2_app.R` to execute the commands line by line as following.
 
 * For Model Input section, specify random seed `myseed`, and specify the folder `foldername` to save output files (a new folder will be created if it does not exist). For example: 
   ```
