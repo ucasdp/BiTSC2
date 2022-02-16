@@ -5,15 +5,7 @@ Bayesian inference of Tumor clonal Tree by joint analysis of Single-Cell SNV and
 
 BiTSC2 is written with `R` and `C++`. Before implementing our software, please install the following packages in `R`:
 
-data manipulation: `tidyr`, `reshape`, `dplyr`
-
-Bayesian analysis: `coda`
-
-integrating `c++` functionality: `Rcpp`, `RcppArmadillo`
-
-visualization: `ggplot2`, `igraph`
-
-others: `mclust`, `gtools`, `vegan`
+ `tidyr`, `reshape`, `dplyr`, `coda`, `Rcpp`, `RcppArmadillo`, `ggplot2`, `igraph`, `mclust`, `gtools`, `vegan`
 
 
 
@@ -22,7 +14,7 @@ others: `mclust`, `gtools`, `vegan`
 
 To use BiTSC2, please set `R` working directory to `BiTSC2-master` after downloading this repository. Please make sure you have installed all the dependencies correctly, and then open source code `BiTSC2_app.R` to execute the commands line by line as following.
 
-* For Model Input section, specify random seed `myseed`, and specify the folder `foldername` to save output files (a new folder will be created if it does not exist). For example: 
+* In *Model Input* section, first set random seed `myseed`, and then specify the folder `foldername` to save output files (a new folder will be created if it does not exist). For example: 
   ```
   #################################################################
   ###################### MODEL INPUT ##############################
@@ -47,7 +39,7 @@ To use BiTSC2, please set `R` working directory to `BiTSC2-master` after downloa
   `NULL`, that is, use locus specific segments (each gene/ SNV locus as a segment) to update the CNA genotype matrix `L`;
    
 
-* Next, specify Bayesian sampling parameters in `specify_pars.R`. For most of the parameters, default values work just fine. Some of the parameters you can change are:
+* Next, assign Bayesian sampling parameters in `specify_pars.R`. For most of the parameters, BiTSC2 works just fine with default values. Some of the parameters you can change are:
   ```
   #### maximum number of copy
   Params$max_CN <- 4
@@ -62,7 +54,7 @@ To use BiTSC2, please set `R` working directory to `BiTSC2-master` after downloa
   Nclone <- c(3:10)  # candidate subclone numbers K
   ```
 
-* Then run the remaining sections one by one:
+* Then execute the remaining sections step by step:
 
    + `sampler.R` to perform MCMC sampling, then the samples used for inference are stored in the `.Rdata` files;
    
