@@ -69,12 +69,15 @@ To use BiTSC2, please set `R` working directory to `BiTSC2-master` after downloa
 ## Citation
 Please cite the BiTSC2 in your publications if it helps your research.
 ```
-@article{chen2020bitsc,
-  title={BiTSC\^{} 2: Bayesian inference of Tumor clonal Tree by joint analysis of Single-Cell SNV and CNA data},
+@article{chen2022bitsc,
+  title={BiTSC 2: Bayesian inference of Tumor clonal Tree by joint analysis of Single-Cell SNV and CNA data},
   author={Chen, Ziwei and Gong, Fuzhou and Wan, Lin and Ma, Liang},
-  journal={bioRxiv},
-  year={2020},
-  publisher={Cold Spring Harbor Laboratory}
+  journal={Briefings in Bioinformatics},
+  volume={23},
+  number={3},
+  pages={bbac092},
+  year={2022},
+  publisher={Oxford University Press}
 }
 
 ```
