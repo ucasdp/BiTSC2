@@ -63,9 +63,9 @@ Params$segments <- segments
 ############  specify MCMC parameters ##################
 ########################################################
 
-MCMC_par$burnin <- 1000  # burnin sample size
-MCMC_par$Nsamp <- 1000   # number of samples for inference
-MCMC_par$Ntune <- 1000  # number of samples used for adaptive parameter tuning
+MCMC_par$burnin <- 500  # burnin sample size
+MCMC_par$Nsamp <- 500   # number of samples for inference
+MCMC_par$Ntune <- 500  # number of samples used for adaptive parameter tuning
 
 
 
